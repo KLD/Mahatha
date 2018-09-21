@@ -1,11 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Clickable : MonoBehaviour {
-
-
-    public Clickable other;
 
     private AudioSource Source;
     public AudioSource Shared; 
@@ -15,32 +13,46 @@ public class Clickable : MonoBehaviour {
     private SpriteRenderer spriteRenderer;
     private Animal current;
 
+    public bool Initial; 
 
-    private void Start()
+
+
+
+    private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         Source = GetComponent<AudioSource>(); 
-        GetNewAnimal(); 
-        Source.Play(); 
+
+        Showup(); 
+
+
+        gameObject.SetActive(Initial);
+        
     }
 
-   
-    private void GetNewAnimal()
+    private void Start()
+    {
+        Source.Play();
+    }
+
+    public void Showup()
     {
         current = collection.GetRandomPair();
         spriteRenderer.sprite = current.Sprite;
         Source.clip = current.Sound;
+
+        gameObject.SetActive(true); 
     }
 
+    public void ShutDown()
+    {
+        gameObject.SetActive(false); 
+    }
 
     private void OnMouseDown()
     {
-        Shared.PlayOneShot(current.Name);
-
-        this.gameObject.SetActive(false);
-        other.gameObject.SetActive(true); 
-        GetNewAnimal();
+        Shared.PlayOneShot(current.Name, 2f); 
+        collection.SwitchClickable(this); 
     }
-
-    
+   
 }
